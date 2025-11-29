@@ -1,0 +1,12 @@
+# Script PowerShell para crear topics en Kafka
+
+Write-Host "Esperando a que Kafka esté listo..."
+Start-Sleep -Seconds 30
+
+# Crear topics
+docker exec -it arquitectura_ccs-kafka1-1 kafka-topics --create --topic telemetry-topic --bootstrap-server kafka1:29092 --partitions 3 --replication-factor 2
+docker exec -it arquitectura_ccs-kafka1-1 kafka-topics --create --topic emergency-topic --bootstrap-server kafka1:29092 --partitions 3 --replication-factor 2
+docker exec -it arquitectura_ccs-kafka1-1 kafka-topics --create --topic alerts-topic --bootstrap-server kafka1:29092 --partitions 3 --replication-factor 2
+docker exec -it arquitectura_ccs-kafka1-1 kafka-topics --create --topic rules-topic --bootstrap-server kafka1:29092 --partitions 3 --replication-factor 2
+
+Write-Host "Topics de Kafka creados exitosamente!"

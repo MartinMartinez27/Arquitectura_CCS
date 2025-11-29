@@ -1,0 +1,6 @@
+@Arquitectura_CCS.ApiGateway_HostAddress = http://localhost:5054
+
+GET {{Arquitectura_CCS.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

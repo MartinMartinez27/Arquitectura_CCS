@@ -1,0 +1,6 @@
+@Arquitectura_CCS.IngestionService_HostAddress = http://localhost:5263
+
+GET {{Arquitectura_CCS.IngestionService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
