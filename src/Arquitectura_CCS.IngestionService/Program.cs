@@ -5,7 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-
+builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 // Configurar servicios comunes (DbContext, etc.)
 builder.Services.AddCommonServices(builder.Configuration);
 
@@ -26,6 +27,13 @@ builder.Services.AddSingleton<IProducer<Null, string>>(sp =>
 });
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
