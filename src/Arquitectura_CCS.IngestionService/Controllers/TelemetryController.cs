@@ -183,5 +183,66 @@ namespace Arquitectura_CCS.IngestionService.Controllers
                 });
             }
         }
+        //[HttpPost("vehicle")]
+        //public async Task<IActionResult> ReceiveVehicleTelemetry([FromBody] VehicleTelemetryRequest request)
+        //{
+        //    try
+        //    {
+        //        // Publicar directamente a Kafka
+        //        var message = new Message<Null, string>
+        //        {
+        //            Value = System.Text.Json.JsonSerializer.Serialize(request)
+        //        };
+
+        //        await _kafkaProducer.ProduceAsync("telemetry-topic", message);
+
+        //        _logger.LogInformation("Telemetry received for vehicle {VehicleId}", request.VehicleId);
+
+        //        return Accepted(new
+        //        {
+        //            Message = "Telemetry queued",
+        //            VehicleId = request.VehicleId
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error processing telemetry for vehicle {VehicleId}", request.VehicleId);
+        //        return StatusCode(500, "Internal server error");
+        //    }
+        //}
+
+        //[HttpPost("emergency")]
+        //public async Task<IActionResult> ReceiveEmergencySignal([FromBody] EmergencySignalRequest request)
+        //{
+        //    try
+        //    {
+        //        var message = new Message<Null, string>
+        //        {
+        //            Value = System.Text.Json.JsonSerializer.Serialize(request),
+        //            Headers = new Headers {
+        //        new Header("priority", new byte[] { 1 }),
+        //        new Header("emergency_type", System.Text.Encoding.UTF8.GetBytes(request.EmergencyType.ToString()))
+        //    }
+        //        };
+
+        //        await _kafkaProducer.ProduceAsync("emergency-topic", message);
+
+        //        _logger.LogWarning("Emergency queued for vehicle {VehicleId}, type {EmergencyType}",
+        //            request.VehicleId, request.EmergencyType);
+
+        //        return Accepted(new
+        //        {
+        //            Message = "Emergency queued",
+        //            VehicleId = request.VehicleId,
+        //            Priority = "HIGH"
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error processing emergency signal for vehicle {VehicleId}", request.VehicleId);
+        //        return StatusCode(500, "Internal server error");
+        //    }
+        //}
+
     }
 }

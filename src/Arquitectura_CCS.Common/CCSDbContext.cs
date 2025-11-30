@@ -5,6 +5,20 @@ namespace Arquitectura_CCS.Common
 {
     public class CCSDbContext : DbContext
     {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("DefaultConnection", options =>
+                {
+                    options.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorNumbersToAdd: null);
+                    options.CommandTimeout(30);
+                });
+            }
+        }
         public CCSDbContext(DbContextOptions<CCSDbContext> options) : base(options) { }
 
         public DbSet<Vehicle> Vehicles { get; set; }

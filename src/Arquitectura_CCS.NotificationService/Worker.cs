@@ -1,4 +1,4 @@
-namespace Arquitectura_CCS.EmergencyService;
+namespace Arquitectura_CCS.NotificationService;
 
 public class Worker : BackgroundService
 {
