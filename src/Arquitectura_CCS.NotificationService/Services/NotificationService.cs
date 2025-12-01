@@ -239,7 +239,7 @@ public class NotificationConsumerService : BackgroundService
 <p><strong>Description:</strong> {emergency.Description}</p>
 <p><strong>Time of Incident:</strong> {emergency.CreatedAt:yyyy-MM-dd HH:mm:ss UTC}</p>
 <br>
-<p style='color: red;'><strong>⚠️ IMMEDIATE MEDICAL/RESCUE RESPONSE REQUIRED</strong></p>
+<p style='color: red;'><strong>IMMEDIATE MEDICAL/RESCUE RESPONSE REQUIRED</strong></p>
 <br>
 <p><em>Automated alert from CCS Emergency Response System</em></p>
         ";

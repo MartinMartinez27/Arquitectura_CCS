@@ -24,6 +24,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arquitectura_CCS.Notificati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCS.PerformanceTests", "tests\CCS.PerformanceTests\CCS.PerformanceTests.csproj", "{D63C1A56-D9D2-84A3-821E-CB39C2FAEA27}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{79801BE8-07B5-4ADC-B581-43D3B5EDD85D}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\init-database.sql = scripts\init-database.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +136,7 @@ Global
 		{A59F92FE-344D-4D41-B467-8B0FAE483CC5} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F10BEE43-3EBD-4229-9083-DDB49698953D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{D9958BD7-3500-B21F-308B-91C4DC54209D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{D63C1A56-D9D2-84A3-821E-CB39C2FAEA27} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22C754BA-198B-41FD-8141-8E63018CC0A3}

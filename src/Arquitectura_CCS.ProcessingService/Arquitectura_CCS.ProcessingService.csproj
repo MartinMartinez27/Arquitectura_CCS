@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -14,5 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Arquitectura_CCS.Common\Arquitectura_CCS.Common.csproj" />
+    <ProjectReference Include="..\Arquitectura_CCS.RulesEngine\Arquitectura_CCS.RulesEngine.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
 ﻿using Arquitectura_CCS.Common;
 using Arquitectura_CCS.Common.DTOs;
+using Arquitectura_CCS.Common.Models;
 using Confluent.Kafka;
+using RulesEngines = Arquitectura_CCS.RulesEngine.Engine.RulesEngine;
 
 namespace Arquitectura_CCS.ProcessingService.Services;
 
@@ -82,30 +84,32 @@ public class TelemetryConsumerService : BackgroundService
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<CCSDbContext>();
 
-            // Lógica de procesamiento
-            _logger.LogInformation("Processed telemetry for vehicle {VehicleId} at {Timestamp}",
+            var rulesEngine = scope.ServiceProvider.GetRequiredService<RulesEngines>();
+
+            _logger.LogInformation("Processing telemetry for vehicle {VehicleId} at {Timestamp}",
                 telemetryData.VehicleId, telemetryData.Timestamp);
 
-            // Detectar si el vehículo está detenido inesperadamente
-            if (!telemetryData.IsMoving && telemetryData.EngineOn && !(telemetryData.IsPlannedStop ?? false))
+            // Convertir a VehicleTelemetry para el RulesEngine
+            var telemetry = new VehicleTelemetry
             {
-                _logger.LogWarning("Unplanned stop detected for vehicle {VehicleId}", telemetryData.VehicleId);
-            }
+                VehicleId = telemetryData.VehicleId,
+                VehicleType = (Common.Enums.VehicleType)telemetryData.VehicleType,
+                Latitude = telemetryData.Latitude,
+                Longitude = telemetryData.Longitude,
+                Speed = telemetryData.Speed,
+                Direction = telemetryData.Direction,
+                IsMoving = telemetryData.IsMoving,
+                EngineOn = telemetryData.EngineOn,
+                FuelLevel = telemetryData.FuelLevel,
+                CargoTemperature = telemetryData.CargoTemperature,
+                CargoStatus = telemetryData.CargoStatus,
+                IsPlannedStop = telemetryData.IsPlannedStop,
+                Timestamp = telemetryData.Timestamp
+            };
 
-            // Detectar exceso de velocidad (ejemplo: >80 km/h)
-            if (telemetryData.Speed > 80)
-            {
-                _logger.LogWarning("Speed limit exceeded for vehicle {VehicleId}: {Speed} km/h",
-                    telemetryData.VehicleId, telemetryData.Speed);
-            }
+            await rulesEngine.ProcessTelemetryAsync(telemetry);
 
-            // Detectar temperatura de carga fuera de rango (para camiones)
-            if (telemetryData.CargoTemperature.HasValue &&
-                (telemetryData.CargoTemperature < 15 || telemetryData.CargoTemperature > 25))
-            {
-                _logger.LogWarning("Cargo temperature out of range for vehicle {VehicleId}: {Temperature}°C",
-                    telemetryData.VehicleId, telemetryData.CargoTemperature);
-            }
+            _logger.LogInformation("Rules evaluation completed for vehicle {VehicleId}", telemetryData.VehicleId);
 
         }
         catch (Exception ex)
@@ -113,7 +117,6 @@ public class TelemetryConsumerService : BackgroundService
             _logger.LogError(ex, "Error processing telemetry message: {Message}", messageJson);
         }
     }
-
     public override void Dispose()
     {
         _consumer?.Dispose();

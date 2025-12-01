@@ -1,4 +1,43 @@
 ﻿services:
+  # SQL Server SIN health check
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "CCS_Password123!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+      - ./scripts:/scripts
+    networks:
+      - ccs-network
+
+  # Script de inicialización con espera fija
+  db-init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sql-server
+    volumes:
+      - ./scripts:/scripts
+    networks:
+      - ccs-network
+    command: |
+      /bin/bash -c "
+      echo 'Waiting 40 seconds for SQL Server to start...'
+      sleep 40
+      echo 'Initializing database...'
+      /opt/mssql-tools/bin/sqlcmd -S sql-server -U sa -P 'CCS_Password123!' -d master -i /scripts/init-database.sql
+      if [ $? -eq 0 ]; then
+        echo 'Database initialization completed successfully!'
+      else
+        echo 'Database initialization failed!'
+        exit 1
+      fi
+      "
+
+  # Los servicios de Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     environment:
@@ -73,16 +112,67 @@
     networks:
       - ccs-network
 
-  sql-server:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    environment:
-      SA_PASSWORD: "CCS_Password123!"
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: "Express"
+  # Microservicios .NET - SIN depender de db-init
+  ingestion-service:
+    build:
+      context: .
+      dockerfile: src/Arquitectura_CCS.IngestionService/Dockerfile
     ports:
-      - "1433:1433"
-    volumes:
-      - sql-data:/var/opt/mssql
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sql-server;Database=CCS_VehicleTracking;User Id=sa;Password=CCS_Password123!;TrustServerCertificate=true;
+      - Kafka__BootstrapServers=kafka1:29092,kafka2:29093,kafka3:29094
+    depends_on:
+      - sql-server
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      - ccs-network
+
+  processing-service:
+    build:
+      context: .
+      dockerfile: src/Arquitectura_CCS.ProcessingService/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sql-server;Database=CCS_VehicleTracking;User Id=sa;Password=CCS_Password123!;TrustServerCertificate=true;
+      - Kafka__BootstrapServers=kafka1:29092,kafka2:29093,kafka3:29094
+    depends_on:
+      - sql-server
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      - ccs-network
+
+  emergency-service:
+    build:
+      context: .
+      dockerfile: src/Arquitectura_CCS.EmergencyService/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sql-server;Database=CCS_VehicleTracking;User Id=sa;Password=CCS_Password123!;TrustServerCertificate=true;
+      - Kafka__BootstrapServers=kafka1:29092,kafka2:29093,kafka3:29094
+    depends_on:
+      - sql-server
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      - ccs-network
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: src/Arquitectura_CCS.NotificationService/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sql-server;Database=CCS_VehicleTracking;User Id=sa;Password=CCS_Password123!;TrustServerCertificate=true;
+      - Kafka__BootstrapServers=kafka1:29092,kafka2:29093,kafka3:29094
+    depends_on:
+      - sql-server
+      - kafka1
+      - kafka2
+      - kafka3
     networks:
       - ccs-network
 
