@@ -40,10 +40,11 @@ jobs:
           --results-directory TestResults \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
-          /p:CoverletOutput=TestResults/coverage
+          /p:CoverletOutput=$(pwd)/TestResults/coverage
 
     - name: Generate coverage report
       run: |
+        ls -la TestResults
         reportgenerator \
           -reports:TestResults/coverage.cobertura.xml \
           -targetdir:TestResults/CoverageReport \
