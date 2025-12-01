@@ -1,18 +1,18 @@
-Arquitectura CCS – Event-Driven Telemetry Platform
+# Arquitectura CCS – Event-Driven Telemetry Platform
 
 Este repositorio implementa la arquitectura base del sistema de monitoreo vehicular de CCS (Compañía Colombiana de Seguimiento de Vehículos).
 La solución está diseñada bajo un enfoque event-driven, permitiendo alta disponibilidad, resiliencia y escalabilidad horizontal mediante colas, particiones y workers paralelos.
 
-🚀 Tecnologías utilizadas
+## 🚀 Tecnologías utilizadas
 
-.NET 9 Web API
-Docker & Docker Compose
-Kafka + Zookeeper
-Arquitectura por capas (Domain, Application, Infrastructure, API)
-GitHub Actions para CI/CD
-Cobertura de pruebas unitarias generada automáticamente
+- **.NET 9 Web API**
+- **Docker & Docker Compose**
+- **Kafka + Zookeeper**
+- **Arquitectura por capas** (Domain, Application, Infrastructure, API)
+- **GitHub Actions** para CI/CD
+- **Cobertura de pruebas unitarias** automática
 
-🧱 Arquitectura General
+## 🧱 Arquitectura General
 La solución sigue un flujo orientado a eventos:
 API Telemetry & Emergency: recibe telemetría y emergencias desde vehículos.
 Kafka Cluster: almacena, balancea y distribuye eventos usando el vehicleId como clave de particionado para mantener orden por vehículo.
@@ -24,34 +24,33 @@ Garantizar orden por vehículo
 Mantener alta disponibilidad ante fallas
 Lograr consistencia eventual en el sistema
 
-🐳 Ejecución con Docker Compose
+## 🐳 Ejecución con Docker Compose
 Incluye todos los servicios necesarios:
 API de Telemetría y Emergencias
 Worker de procesamiento
 Kafka + Zookeeper
 SQL Server (si el compose lo incluye)
 
-1. Clonar el repositorio
-git clone https://github.com/MartinMartinez27/Arquitectura_CCS.git
-cd Arquitectura_CCS
+# 1. Clonar el repositorio
+- git clone https://github.com/MartinMartinez27/Arquitectura_CCS.git
+- cd Arquitectura_CCS
 
-2. Construir y ejecutar los contenedores
-docker compose up --build
-o en segundo plano:
-docker compose up -d
+# 2. Construir y ejecutar los contenedores
+- docker compose up --build
+- o en segundo plano: docker compose up -d
 
 Docker levantará:
-API Telemetry/Emergencies
-Kafka + Zookeeper
-Workers y servicios internos definidos en el docker-compose.yml
+- API Telemetry/Emergencies
+- Kafka + Zookeeper
+- Workers y servicios internos definidos en el docker-compose.yml
 
-3. Detener los contenedores
-docker compose down
+# 3. Detener los contenedores
+- docker compose down
 
-4. Limpiar volúmenes (opcional)
-docker compose down -v
+# 4. Limpiar volúmenes (opcional)
+- docker compose down -v
 
-🧪 Pruebas cURL (PowerShell)
+## 🧪 Pruebas cURL (PowerShell)
 1. Enviar Telemetría Vehicular
 curl -Method POST http://localhost:5000/api/telemetry/vehicle `
    -Headers @{ "Content-Type" = "application/json" } `
@@ -84,25 +83,25 @@ curl -Method POST http://localhost:5000/api/telemetry/emergency `
      "additionalData":"{\"test\": \"docker_success\"}"
    }'
 
-📈 Flujo tras enviar los cURL
+## 📈 Flujo tras enviar los cURL
 
-La API recibe la telemetría/emergencia
-Publica un evento en Kafka
-El Worker consume el mensaje
-Procesa la información
-Persiste en la base de datos
-Esto deja la arquitectura lista para escalar mediante:
-Múltiples instancias del API
-Workers paralelos
-Particiones adicionales en Kafka
+- La API recibe la telemetría/emergencia
+- Publica un evento en Kafka
+- El Worker consume el mensaje
+- Procesa la información
+- Persiste en la base de datos
+- Esto deja la arquitectura lista para escalar mediante:
+-- Múltiples instancias del API
+-- Workers paralelos
+-- Particiones adicionales en Kafka
 
-🟩 GitHub Actions — Pruebas unitarias con Coverage
+## 🟩 GitHub Actions — Pruebas unitarias con Coverage
 El repositorio incluye un workflow en GitHub Actions que:
-Compila el proyecto
-Ejecuta las pruebas unitarias
-Genera reporte de cobertura
-Publica los resultados directamente en la pestaña Actions del repositorio
-Esto garantiza calidad continua del código y validación automática en cada push o pull request.
+- Compila el proyecto
+- Ejecuta las pruebas unitarias
+- Genera reporte de cobertura
+- Publica los resultados directamente en la pestaña Actions del repositorio
+- Esto garantiza calidad continua del código y validación automática en cada push o pull request.
 
 🛠️ Notas finales
 Si usás Kafka de manera local, asegurate de que los puertos no estén ocupados por otros procesos.
