@@ -25,7 +25,6 @@ jobs:
     - name: Install dependencies
       run: |
         dotnet restore
-        dotnet tool install --global coverlet.console
         dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Build solution
@@ -37,15 +36,17 @@ jobs:
           --no-build \
           --configuration Release \
           --logger "trx;LogFileName=TestResults/test_results.trx" \
-          /p:CollectCoverage=true \
-          /p:CoverletOutput=$(pwd)/TestResults/coverage/ \
-          /p:CoverletOutputFormat=cobertura
+          --collect:"XPlat Code Coverage"
 
     - name: Generate coverage report
       run: |
+        # Buscar automáticamente el archivo cobertura generado
+        COVERAGE_FILE=$(find TestResults -type f -name "coverage.cobertura.xml" | head -1)
+        echo "Using coverage file: $COVERAGE_FILE"
+
         reportgenerator \
-          -reports:$(pwd)/TestResults/coverage/coverage.cobertura.xml \
-          -targetdir:$(pwd)/TestResults/CoverageReport \
+          -reports:"$COVERAGE_FILE" \
+          -targetdir:TestResults/CoverageReport \
           -reporttypes:Html
 
     - name: Publish test results
@@ -58,17 +59,15 @@ jobs:
 
     - name: Check coverage threshold
       run: |
-        COVERAGE_FILE=$(pwd)/TestResults/coverage/coverage.cobertura.xml
-        # Extraer porcentaje de cobertura del reporte XML
+        COVERAGE_FILE=$(find TestResults -type f -name "coverage.cobertura.xml" | head -1)
         COVERAGE_PERCENT=$(grep -oP 'line-rate="\K[0-9.]+' "$COVERAGE_FILE" | head -1)
         COVERAGE_PERCENT=$(echo "$COVERAGE_PERCENT * 100" | bc -l | xargs printf "%.2f")
         
         echo "Code Coverage: $COVERAGE_PERCENT%"
         
-        # Fallar si la cobertura es menor al 50%
         if (( $(echo "$COVERAGE_PERCENT < 50" | bc -l) )); then
-          echo "Code coverage below 50% threshold"
+          echo "❌ Code coverage below 50% threshold"
           exit 1
         else
-          echo "Code coverage meets 50% threshold"
+          echo "✅ Code coverage meets 50% threshold"
         fi
