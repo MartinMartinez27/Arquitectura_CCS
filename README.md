@@ -45,6 +45,7 @@ Docker levantará:
 - Kafka + Zookeeper
 - Workers y servicios internos definidos en el docker-compose.yml
 - http://localhost:5000/swagger/
+- http://localhost:8080/
 # 3. Detener los contenedores
 - docker compose down
 
