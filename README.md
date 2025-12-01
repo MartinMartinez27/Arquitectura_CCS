@@ -8,7 +8,7 @@ La solución está diseñada bajo un enfoque event-driven, permitiendo alta disp
 - **.NET 9 Web API**
 - **Docker & Docker Compose**
 - **Kafka + Zookeeper**
-- **Arquitectura por capas** (Domain, Application, Infrastructure, API)
+- **Arquitectura por Event Driven**
 - **GitHub Actions** para CI/CD
 - **Cobertura de pruebas unitarias** automática
 
