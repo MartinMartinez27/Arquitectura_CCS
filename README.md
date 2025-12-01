@@ -1,44 +1,49 @@
 Arquitectura CCS – Event-Driven Telemetry Platform
-Este repositorio implementa la arquitectura base para el sistema de monitoreo vehicular de CCS (Compañía Colombiana de Seguimiento de Vehículos).
-La solución está diseñada bajo un estilo orientado a eventos, permitiendo alta disponibilidad, resiliencia y escalabilidad horizontal mediante colas, particiones y workers paralelos.
 
+Este repositorio implementa la arquitectura base del sistema de monitoreo vehicular de CCS (Compañía Colombiana de Seguimiento de Vehículos).
+La solución está diseñada bajo un enfoque event-driven, permitiendo alta disponibilidad, resiliencia y escalabilidad horizontal mediante colas, particiones y workers paralelos.
 
 🚀 Tecnologías utilizadas
+
 .NET 9 Web API
 Docker & Docker Compose
 Kafka + Zookeeper
 Arquitectura por capas (Domain, Application, Infrastructure, API)
+GitHub Actions para CI/CD
+Cobertura de pruebas unitarias generada automáticamente
 
 🧱 Arquitectura General
-La solución sigue un flujo event-driven:
-API Telemetry & Emergency: Recibe telemetría y eventos de emergencia desde los vehículos.
-Kafka Cluster: Se encarga de almacenar, distribuir y balancear los eventos por particiones, usando vehicleId como clave de particionado.
-Worker de Procesamiento (Background Worker): Consume los mensajes desde Kafka, los valida, transforma y persiste en la base de datos.
-SQL Server / Storage Layer: Guarda la telemetría procesada y los eventos de emergencia.
+La solución sigue un flujo orientado a eventos:
+API Telemetry & Emergency: recibe telemetría y emergencias desde vehículos.
+Kafka Cluster: almacena, balancea y distribuye eventos usando el vehicleId como clave de particionado para mantener orden por vehículo.
+Background Worker: consume los mensajes de Kafka, valida la información y la persiste.
+SQL Server / Storage Layer: almacena la telemetría procesada.
 Este enfoque permite:
-- Escalar horizontalmente el API y los workers
-- Garantizar orden por vehículo
-- Mantener alta disponibilidad frente a fallos
-- Asegurar consistencia eventual en el sistema
+Escalar horizontalmente el API y los workers
+Garantizar orden por vehículo
+Mantener alta disponibilidad ante fallas
+Lograr consistencia eventual en el sistema
 
 🐳 Ejecución con Docker Compose
-La solución incluye todos los servicios necesarios:
+Incluye todos los servicios necesarios:
 API de Telemetría y Emergencias
 Worker de procesamiento
 Kafka + Zookeeper
-SQL Server (si está incluido en el compose)
+SQL Server (si el compose lo incluye)
+
 1. Clonar el repositorio
 git clone https://github.com/MartinMartinez27/Arquitectura_CCS.git
 cd Arquitectura_CCS
 
 2. Construir y ejecutar los contenedores
 docker compose up --build
+o en segundo plano:
 docker compose up -d
 
 Docker levantará:
 API Telemetry/Emergencies
 Kafka + Zookeeper
-Servicios internos definidos en el docker-compose.yml
+Workers y servicios internos definidos en el docker-compose.yml
 
 3. Detener los contenedores
 docker compose down
@@ -47,8 +52,6 @@ docker compose down
 docker compose down -v
 
 🧪 Pruebas cURL (PowerShell)
-Aquí tenés los comandos completos para probar los endpoints principales.
-
 1. Enviar Telemetría Vehicular
 curl -Method POST http://localhost:5000/api/telemetry/vehicle `
    -Headers @{ "Content-Type" = "application/json" } `
@@ -81,17 +84,27 @@ curl -Method POST http://localhost:5000/api/telemetry/emergency `
      "additionalData":"{\"test\": \"docker_success\"}"
    }'
 
-📈 ¿Qué sucede al enviar los cURL?
+📈 Flujo tras enviar los cURL
 
 La API recibe la telemetría/emergencia
 Publica un evento en Kafka
-El Worker consume el evento
+El Worker consume el mensaje
 Procesa la información
 Persiste en la base de datos
-La arquitectura queda lista para escalar por demanda:
-    instancias del API
-    workers paralelos
-    particiones en Kafka
+Esto deja la arquitectura lista para escalar mediante:
+Múltiples instancias del API
+Workers paralelos
+Particiones adicionales en Kafka
+
+🟩 GitHub Actions — Pruebas unitarias con Coverage
+El repositorio incluye un workflow en GitHub Actions que:
+Compila el proyecto
+Ejecuta las pruebas unitarias
+Genera reporte de cobertura
+Publica los resultados directamente en la pestaña Actions del repositorio
+Esto garantiza calidad continua del código y validación automática en cada push o pull request.
 
 🛠️ Notas finales
-Si usas Kafka, asegurate de que los puertos no estén siendo usados por otros procesos.
+Si usás Kafka de manera local, asegurate de que los puertos no estén ocupados por otros procesos.
+
+El docker-compose.yml puede ampliarse para agregar métricas, dashboards y más workers según la demanda.
