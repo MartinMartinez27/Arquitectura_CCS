@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Arquitectura_CCS.ProcessingService-ccd44271-a70a-4fe9-9931-babfe072e154</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="2.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Arquitectura_CCS.Common\Arquitectura_CCS.Common.csproj" />
+    <ProjectReference Include="..\Arquitectura_CCS.RulesEngine\Arquitectura_CCS.RulesEngine.csproj" />
+  </ItemGroup>
+</Project>

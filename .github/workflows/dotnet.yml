@@ -1,0 +1,85 @@
+name: .NET Tests and Coverage
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  test-and-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        dotnet restore
+        dotnet tool install --global dotnet-reportgenerator-globaltool
+
+    - name: Build solution
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run tests with coverage
+      run: |
+        dotnet test ./tests/Arquitectura_CCS.UnitTests/Arquitectura_CCS.UnitTests.csproj \
+          --no-build \
+          --configuration Release \
+          --logger "trx;LogFileName=TestResults/test_results.trx" \
+          --collect:"XPlat Code Coverage"
+
+    - name: Generate coverage report
+      run: |
+        cd ./tests/Arquitectura_CCS.UnitTests
+
+        COVERAGE_FILE=$(find TestResults -type f -name "coverage.cobertura.xml" | head -1)
+        echo "Using coverage file: $COVERAGE_FILE"
+
+        reportgenerator \
+          -reports:"$COVERAGE_FILE" \
+          -targetdir:CoverageReport \
+          -reporttypes:Html
+
+
+
+    - name: Publish test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          ./tests/Arquitectura_CCS.UnitTests/TestResults/*.trx
+          ./tests/Arquitectura_CCS.UnitTests/CoverageReport/
+
+
+    - name: Check coverage threshold
+      run: |
+        cd ./tests/Arquitectura_CCS.UnitTests
+
+        # Buscar el archivo cobertura generado por XPlat
+        COVERAGE_FILE=$(find TestResults -type f -name "coverage.cobertura.xml" | head -1)
+        echo "Using coverage file: $COVERAGE_FILE"
+
+        # Extraer porcentaje de cobertura del reporte XML
+        COVERAGE_PERCENT=$(grep -oP 'line-rate="\K[0-9.]+' "$COVERAGE_FILE" | head -1)
+        COVERAGE_PERCENT=$(echo "$COVERAGE_PERCENT * 100" | bc -l | xargs printf "%.2f")
+        
+        echo "Code Coverage: $COVERAGE_PERCENT%"
+
+        # Fallar si la cobertura es menor al 50%
+        if (( $(echo "$COVERAGE_PERCENT < 50" | bc -l) )); then
+          echo "Code coverage below 50% threshold"
+          exit 1
+        else
+          echo "Code coverage meets 50% threshold"
+        fi
+
