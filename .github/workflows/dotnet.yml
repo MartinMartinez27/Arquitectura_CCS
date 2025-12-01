@@ -33,16 +33,14 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        dotnet test \
+        dotnet test ./tests/Arquitectura_CCS.UnitTests/Arquitectura_CCS.UnitTests.csproj \
           --no-build \
           --configuration Release \
-          --verbosity normal \
           --logger trx \
           --results-directory TestResults \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=cobertura \
-          /p:CoverletOutput=TestResults/coverage.cobertura.xml \
-          /p:Exclude="[xunit.*]*%2c[*.Tests]*"
+          /p:CoverletOutput=TestResults/coverage
 
     - name: Generate coverage report
       run: |
