@@ -37,6 +37,7 @@ SQL Server (si el compose lo incluye)
 
 # 2. Construir y ejecutar los contenedores
 - docker compose up --build
+- docker-compose -f docker-compose.yml up -d
 - o en segundo plano: docker compose up -d
 
 Docker levantará:
