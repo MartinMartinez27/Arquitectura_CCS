@@ -44,7 +44,7 @@ Docker levantará:
 - API Telemetry/Emergencies
 - Kafka + Zookeeper
 - Workers y servicios internos definidos en el docker-compose.yml
-
+- http://localhost:5000/swagger/
 # 3. Detener los contenedores
 - docker compose down
 
