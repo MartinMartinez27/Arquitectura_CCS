@@ -8,6 +8,7 @@ namespace Arquitectura_CCS.Common.Enums
 {
     public enum EmergencyType
     {
+        None = 0,
         PanicButton = 1,    // Botón de pánico
         Mechanical = 2,     // Problemas mecánicos
         Security = 3,       // Eventualidades de seguridad

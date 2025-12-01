@@ -8,6 +8,7 @@ namespace Arquitectura_CCS.Common.Enums
 {
     public enum ActionType
     {
+        None = 0,
         NotifyOwner = 1,        // Notificar al propietario
         NotifyAuthorities = 2,  // Notificar autoridades
         AlertRescue = 3,        // Alertar organismos de socorro

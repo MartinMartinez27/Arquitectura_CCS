@@ -2,7 +2,6 @@
 using Arquitectura_CCS.Common.Models;
 using Arquitectura_CCS.Common.Enums;
 using Microsoft.EntityFrameworkCore;
-
 namespace Arquitectura_CCS.UnitTests.Data;
 
 public class CCSDbContextTests

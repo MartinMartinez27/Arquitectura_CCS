@@ -11,17 +11,13 @@ namespace Arquitectura_CCS.Common.Models
     {
         public string ActionId { get; set; } = Guid.NewGuid().ToString();
         public string RuleId { get; set; } = string.Empty;
-        public ActionType ActionType { get; set; }
-
-        // Configuración de la acción
-        public string Target { get; set; } = string.Empty; // email, phone, webhook, etc.
+        public ActionType ActionType { get; set; } = ActionType.None;
+        public string Target { get; set; } = string.Empty; 
         public string MessageTemplate { get; set; } = string.Empty;
-        public string? Parameters { get; set; } // JSON con parámetros adicionales
+        public string? Parameters { get; set; } 
 
-        public int DelaySeconds { get; set; } = 0; // Retardo en ejecución
+        public int DelaySeconds { get; set; } = 0;
         public bool IsEnabled { get; set; } = true;
-
-        // Navegación
-        public Rule Rule { get; set; } = null!;
+        public Rule Rule { get; set; } = new Rule();
     }
 }

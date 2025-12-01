@@ -49,4 +49,5 @@ public class CargoTemperatureRule : BaseRule
 
         await PublishToKafkaAsync("alerts-topic", alertMessage, serviceProvider);
     }
+
 }
