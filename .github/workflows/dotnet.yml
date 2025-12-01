@@ -40,22 +40,28 @@ jobs:
 
     - name: Generate coverage report
       run: |
-        # Buscar automáticamente el archivo cobertura generado
+        # Cambiar al directorio del proyecto de tests
+        cd ./tests/Arquitectura_CCS.UnitTests
+
+        # Buscar el archivo cobertura generado por XPlat
         COVERAGE_FILE=$(find TestResults -type f -name "coverage.cobertura.xml" | head -1)
         echo "Using coverage file: $COVERAGE_FILE"
 
+        # Generar el reporte HTML
         reportgenerator \
           -reports:"$COVERAGE_FILE" \
-          -targetdir:TestResults/CoverageReport \
+          -targetdir:CoverageReport \
           -reporttypes:Html
+
 
     - name: Publish test results
       uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: |
-          TestResults/*.trx
-          TestResults/CoverageReport/
+          ./tests/Arquitectura_CCS.UnitTests/TestResults/*.trx
+          ./tests/Arquitectura_CCS.UnitTests/CoverageReport/
+
 
     - name: Check coverage threshold
       run: |
@@ -66,8 +72,8 @@ jobs:
         echo "Code Coverage: $COVERAGE_PERCENT%"
         
         if (( $(echo "$COVERAGE_PERCENT < 50" | bc -l) )); then
-          echo "❌ Code coverage below 50% threshold"
+          echo "Code coverage below 50% threshold"
           exit 1
         else
-          echo "✅ Code coverage meets 50% threshold"
+          echo "Code coverage meets 50% threshold"
         fi
