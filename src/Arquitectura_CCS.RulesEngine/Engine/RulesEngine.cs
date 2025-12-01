@@ -72,4 +72,9 @@ public class RulesEngine
             _logger.LogDebug("No rules executed for vehicle {VehicleId}", telemetry.VehicleId);
         }
     }
+
+    public List<IRule> GetActiveRules()
+    {
+        return _rules;
+    }
 }

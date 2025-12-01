@@ -72,22 +72,21 @@ public class TelemetryConsumerService : BackgroundService
     {
         try
         {
-            // Deserializar el mensaje
+            _logger.LogInformation("RAW MESSAGE: {Message}", messageJson); // NUEVO
+
             var telemetryData = System.Text.Json.JsonSerializer.Deserialize<TelemetryData>(messageJson);
 
             if (telemetryData == null)
             {
-                _logger.LogWarning("Could not deserialize telemetry message: {Message}", messageJson);
+                _logger.LogWarning("Could not deserialize telemetry message");
                 return;
             }
 
+            _logger.LogInformation("Processing telemetry for vehicle {VehicleId}", telemetryData.VehicleId); // NUEVO
+
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<CCSDbContext>();
-
             var rulesEngine = scope.ServiceProvider.GetRequiredService<RulesEngines>();
-
-            _logger.LogInformation("Processing telemetry for vehicle {VehicleId} at {Timestamp}",
-                telemetryData.VehicleId, telemetryData.Timestamp);
 
             // Convertir a VehicleTelemetry para el RulesEngine
             var telemetry = new VehicleTelemetry
@@ -107,14 +106,17 @@ public class TelemetryConsumerService : BackgroundService
                 Timestamp = telemetryData.Timestamp
             };
 
+            _logger.LogInformation("Calling RulesEngine for vehicle {VehicleId}", telemetryData.VehicleId); // NUEVO
+
+            // Ejecutar el RulesEngine
             await rulesEngine.ProcessTelemetryAsync(telemetry);
 
-            _logger.LogInformation("Rules evaluation completed for vehicle {VehicleId}", telemetryData.VehicleId);
+            _logger.LogInformation("Completed processing for vehicle {VehicleId}", telemetryData.VehicleId);
 
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing telemetry message: {Message}", messageJson);
+            _logger.LogError(ex, "Error processing telemetry message");
         }
     }
     public override void Dispose()
