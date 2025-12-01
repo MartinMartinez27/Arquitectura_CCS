@@ -36,18 +36,16 @@ jobs:
         dotnet test ./tests/Arquitectura_CCS.UnitTests/Arquitectura_CCS.UnitTests.csproj \
           --no-build \
           --configuration Release \
-          --logger trx \
-          --results-directory TestResults \
+          --logger "trx;LogFileName=TestResults/test_results.trx" \
           /p:CollectCoverage=true \
-          /p:CoverletOutputFormat=cobertura \
-          /p:CoverletOutput=$(pwd)/TestResults/coverage
+          /p:CoverletOutput=$(pwd)/TestResults/coverage/ \
+          /p:CoverletOutputFormat=cobertura
 
     - name: Generate coverage report
       run: |
-        ls -la TestResults
         reportgenerator \
-          -reports:TestResults/coverage.cobertura.xml \
-          -targetdir:TestResults/CoverageReport \
+          -reports:$(pwd)/TestResults/coverage/coverage.cobertura.xml \
+          -targetdir:$(pwd)/TestResults/CoverageReport \
           -reporttypes:Html
 
     - name: Publish test results
